@@ -1,30 +1,30 @@
 /**
  * 💬 WhatsApp Message Parser
  *
- * Chintu ek WhatsApp chat analyzer bana raha hai. Usse raw WhatsApp
- * exported message line parse karni hai aur usme se date, time, sender,
- * aur message alag alag extract karna hai.
+ * Chintu is building a WhatsApp chat analyzer. He needs to parse a raw
+ * WhatsApp exported message line and extract the date, time, sender,
+ * and message separately.
  *
  * WhatsApp export format:
  *   "DD/MM/YYYY, HH:MM - Sender Name: Message text here"
  *
  * Rules:
- *   - Date extract karo: string ke start se pehle ", " (comma-space) tak
- *   - Time extract karo: ", " ke baad se " - " (space-dash-space) tak
- *   - Sender extract karo: " - " ke baad se pehle ": " (colon-space) tak
- *   - Message text extract karo: pehle ": " ke baad (after sender) sab kuch, trimmed
- *   - wordCount: message ke words count karo (split by space, filter empty strings)
- *   - Sentiment detection (case-insensitive check on message text):
- *     - Agar message mein "😂" ya ":)" ya "haha" hai => sentiment = "funny"
- *     - Agar message mein "❤" ya "love" ya "pyaar" hai => sentiment = "love"
+ *   - Extract the date: from the beginning of the string up to the first ", " (comma-space)
+ *   - Extract the time: from after ", " up to " - " (space-dash-space)
+ *   - Extract the sender: from after " - " up to the first ": " (colon-space)
+ *   - Extract the message text: everything after the first ": " (after the sender), trimmed
+ *   - wordCount: Count the words in the message (split by spaces and filter out empty strings)
+ *   - Sentiment detection (case-insensitive check on the message text):
+ *     - If the message contains "😂", ":)", or "haha" => sentiment = "funny"
+ *     - If the message contains "❤", "love", or "pyaar" => sentiment = "love"
  *     - Otherwise => sentiment = "neutral"
- *     - Agar dono match hote hain, "funny" gets priority
+ *     - If both conditions match, "funny" gets priority
  *   - Hint: Use indexOf(), substring()/slice(), includes(), split(),
- *     trim(), toLowerCase()
+ *     trim(), and toLowerCase()
  *
  * Validation:
- *   - Agar input string nahi hai, return null
- *   - Agar string mein " - " nahi hai ya ": " nahi hai (after sender), return null
+ *   - If the input is not a string, return null
+ *   - If the string does not contain " - " or does not contain ": " (after the sender), return null
  *
  * @param {string} message - Raw WhatsApp exported message line
  * @returns {{ date: string, time: string, sender: string, text: string, wordCount: number, sentiment: string } | null}
@@ -38,6 +38,45 @@
  *   // => { date: "01/12/2024", time: "09:15", sender: "Priya",
  *   //      text: "I love this song", wordCount: 4, sentiment: "love" }
  */
+
 export function parseWhatsAppMessage(message) {
-  // Your code here
+  if (typeof message !== "string") return null;
+
+  const commaIndex = message.indexOf(", ");
+  const dashIndex = message.indexOf(" - ");
+  const colonIndex = message.indexOf(": ", dashIndex + 3);
+
+  if (commaIndex === -1 || dashIndex === -1 || colonIndex === -1) return null;
+
+  const date = message.substring(0, commaIndex);
+  const time = message.substring(commaIndex + 2, dashIndex);
+  const sender = message.substring(dashIndex + 3, colonIndex);
+
+  const text = message.substring(colonIndex + 2).trim();
+
+  const lowerText = text.toLowerCase();
+
+  const sentiment = {
+    funny: ["😂", ":)", "haha"],
+    love: ["❤", "love", "pyaar"],
+  };
+
+  let detectedSentiment = "neutral";
+
+  if (sentiment.funny.some((word) => lowerText.includes(word))) {
+    detectedSentiment = "funny";
+  } else if (sentiment.love.some((word) => lowerText.includes(word))) {
+    detectedSentiment = "love";
+  }
+
+  const wordCount = text.split(" ").filter((word) => word !== "").length;
+
+  return {
+    date,
+    time,
+    sender,
+    text,
+    wordCount,
+    sentiment: detectedSentiment,
+  };
 }
