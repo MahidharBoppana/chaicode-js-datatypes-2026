@@ -1,26 +1,27 @@
 /**
  * 🎬 Bollywood Movie Title Fixer
  *
- * Pappu ne ek movie database banaya hai lekin usne saare titles galat type
- * kar diye - kuch ALL CAPS mein, kuch all lowercase mein, kuch mein extra
- * spaces hain. Tu fix kar de titles ko proper Title Case mein!
+ * Pappu has created a movie database, but he has entered all the titles incorrectly.
+ * Some are in ALL CAPS, some are all lowercase, and some contain extra
+ * spaces. Your task is to fix these titles and convert them into proper Title Case!
  *
  * Rules:
- *   - Extra spaces hatao: leading, trailing, aur beech ke multiple spaces ko
- *     single space banao
- *   - Har word ka pehla letter uppercase, baaki lowercase (Title Case)
- *   - EXCEPTION: Chhote words jo Title Case mein lowercase rehte hain:
+ *   - Remove extra spaces: remove leading and trailing spaces, and replace
+ *     multiple spaces between words with a single space
+ *   - Capitalize the first letter of each word and convert the remaining
+ *     letters to lowercase (Title Case)
+ *   - EXCEPTION: Short words that should remain lowercase in Title Case:
  *     "ka", "ki", "ke", "se", "aur", "ya", "the", "of", "in", "a", "an"
- *     LEKIN agar word title ka PEHLA word hai toh capitalize karo
+ *     HOWEVER, if the word is the FIRST word of the title, capitalize it
  *   - Hint: Use trim(), split(), map(), join(), charAt(), toUpperCase(),
- *     toLowerCase(), slice()
+ *     toLowerCase(), and slice()
  *
  * Validation:
- *   - Agar input string nahi hai, return ""
- *   - Agar string trim karne ke baad empty hai, return ""
+ *   - If the input is not a string, return ""
+ *   - If the string is empty after trimming, return ""
  *
  * @param {string} title - Messy Bollywood movie title
- * @returns {string} Cleaned up Title Case title
+ * @returns {string} Cleaned-up Title Case movie title
  *
  * @example
  *   fixBollywoodTitle("  DILWALE   DULHANIA   LE   JAYENGE  ")
@@ -30,5 +31,31 @@
  *   // => "Dil ka Kya Kare"
  */
 export function fixBollywoodTitle(title) {
-  // Your code here
+  if (typeof title !== "string" || title.trim() === "") return "";
+
+  const smallWords = [
+    "ka",
+    "ki",
+    "ke",
+    "se",
+    "aur",
+    "ya",
+    "the",
+    "of",
+    "in",
+    "a",
+    "an",
+  ];
+
+  const trimmedTitle = title.trim();
+  const splittedTitles = trimmedTitle.split(/\s+/);
+  const formattedTitles = splittedTitles.map((splittedTitle, index) => {
+    const lowerWord = splittedTitle.toLowerCase();
+
+    if (index != 0 && smallWords.includes(lowerWord)) return lowerWord;
+
+    return lowerWord.charAt(0).toUpperCase() + lowerWord.slice(1);
+  });
+
+  return formattedTitles.join(" ");
 }
