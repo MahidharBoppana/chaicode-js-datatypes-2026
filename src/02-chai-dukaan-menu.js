@@ -1,21 +1,21 @@
 /**
- * ☕ Raju ki Chai Dukaan - Menu Formatter
+ * ☕ Raju's Tea Shop - Menu Formatter
  *
- * Raju bhai ne apni chai dukaan ka menu digitize karna decide kiya hai.
- * Items ka array milega, aur tujhe ek formatted menu string banana hai
- * jisme har item ka naam UPPERCASE mein ho aur price ke saath likha ho.
+ * Raju bhai has decided to digitize his tea shop's menu.
+ * You will receive an array of items, and you need to create a formatted
+ * menu string in which each item's name is written in UPPERCASE along with its price.
  *
  * Rules:
- *   - items ek array hai of objects: [{ name: "masala chai", price: 15 }, ...]
- *   - Har item ka naam toUpperCase() karo
- *   - Format: "NAAM - Rs.PRICE" (e.g., "MASALA CHAI - Rs.15")
- *   - Saare formatted items ko " | " se join karo
- *   - Items jinka price 0 ya negative hai, unhe skip karo (filter out)
- *   - Items jinka naam empty string hai ya string nahi hai, unhe bhi skip karo
- *   - Hint: Use Array.isArray(), filter(), map(), join(), toUpperCase()
+ *   - items is an array of objects: [{ name: "masala chai", price: 15 }, ...]
+ *   - Convert each item's name to uppercase using toUpperCase()
+ *   - Format: "NAME - Rs.PRICE" (e.g., "MASALA CHAI - Rs.15")
+ *   - Join all formatted items using " | "
+ *   - Skip items whose price is 0 or negative (filter them out)
+ *   - Also skip items whose name is an empty string or is not a string
+ *   - Hint: Use Array.isArray(), filter(), map(), join(), and toUpperCase()
  *
  * Validation:
- *   - Agar items array nahi hai ya empty hai, return ""
+ *   - If items is not an array or is empty, return ""
  *
  * @param {Array<{name: string, price: number}>} items - Menu items
  * @returns {string} Formatted menu string
@@ -27,6 +27,28 @@
  *   formatChaiMenu([])
  *   // => ""
  */
+
+// Rules:
+//  *   - items is an array of objects: [{ name: "masala chai", price: 15 }, ...]
+//  *   - Convert each item's name to uppercase using toUpperCase()
+//  *   - Format: "NAME - Rs.PRICE" (e.g., "MASALA CHAI - Rs.15")
+//  *   - Join all formatted items using " | "
+//  *   - Skip items whose price is 0 or negative (filter them out)
+//  *   - Also skip items whose name is an empty string or is not a string
+//  *   - Hint: Use Array.isArray(), filter(), map(), join(), and toUpperCase()
 export function formatChaiMenu(items) {
-  // Your code here
+  if (!Array.isArray(items) || items.length === 0) return "";
+
+  const filteredItems = items.filter(
+    (item) =>
+      typeof item.name === "string" &&
+      item.name.trim() !== "" &&
+      item.price > 0,
+  );
+
+  const formattedItems = filteredItems.map((item) => {
+    return `${item.name.toUpperCase()} - Rs.${item.price}`;
+  });
+
+  return formattedItems.join(" | ");
 }
